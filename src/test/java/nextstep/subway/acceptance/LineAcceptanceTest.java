@@ -58,6 +58,45 @@ class LineAcceptanceTest extends AcceptanceTest {
         지하철_노선_목록_조회됨(신분당선, bgRed600, 이호선, bgGreen600, response);
     }
 
+    /**
+     * Given 지하철 노선 생성을 요청 하고
+     * When 생성한 지하철 노선 조회를 요청 하면
+     * Then 생성한 지하철 노선을 응답받는다
+     */
+    @DisplayName("지하철 노선 조회")
+    @Test
+    void getLine() {
+        // given
+        String 신분당선 = "신분당선";
+        String bgRed600 = "bg-red-600";
+        ExtractableResponse<Response> createResponse = 지하철_노선_등록되어_있음(신분당선, bgRed600);
+        String uri = createResponse.header("Location");
+
+        String 이호선 = "이호선";
+        String bgGreen600 = "bg-green-600";
+        지하철_노선_등록되어_있음(이호선, bgGreen600);
+
+        // when
+        ExtractableResponse<Response> response = 지하철_노선_조회_요청(uri);
+
+        // then
+        지하철_노선_조회됨(신분당선, bgRed600, response);
+    }
+
+    private void 지하철_노선_조회됨(String 신분당선, String bgRed600, ExtractableResponse<Response> response) {
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.jsonPath().getString("name")).isEqualTo(신분당선);
+        assertThat(response.jsonPath().getString("color")).isEqualTo(bgRed600);
+    }
+
+    private ExtractableResponse<Response> 지하철_노선_조회_요청(String uri) {
+        return RestAssured.given().log().all()
+                .when()
+                .get(uri)
+                .then().log().all()
+                .extract();
+    }
+
     private ExtractableResponse<Response> 지하철_노선_생성_요청(String name, String color) {
         Map<String, String> params = new HashMap<>();
         params.put("name", name);
@@ -80,8 +119,8 @@ class LineAcceptanceTest extends AcceptanceTest {
                 .extract();
     }
 
-    private void 지하철_노선_등록되어_있음(String name, String color) {
-        ExtractableResponse<Response> createResponse = 지하철_노선_생성_요청(name, color);
+    private ExtractableResponse<Response> 지하철_노선_등록되어_있음(String name, String color) {
+        return 지하철_노선_생성_요청(name, color);
     }
 
     private void 지하철_노선_생성됨(ExtractableResponse<Response> response) {
@@ -93,16 +132,6 @@ class LineAcceptanceTest extends AcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.jsonPath().getList("name")).contains(신분당선, 분당선);
         assertThat(response.jsonPath().getList("color")).contains(red, yellow);
-    }
-
-    /**
-     * Given 지하철 노선 생성을 요청 하고
-     * When 생성한 지하철 노선 조회를 요청 하면
-     * Then 생성한 지하철 노선을 응답받는다
-     */
-    @DisplayName("지하철 노선 조회")
-    @Test
-    void getLine() {
     }
 
     /**
