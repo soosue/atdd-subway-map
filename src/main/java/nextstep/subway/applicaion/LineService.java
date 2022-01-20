@@ -39,7 +39,7 @@ public class LineService {
     }
 
     @Transactional(readOnly = true)
-    public LineResponse findById(Long id) {
+    public LineResponse findLine(Long id) {
         Line line = lineRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(id + ": Line을 찾지 못했습니다."));
         return createLineResponse(line);
     }
@@ -58,5 +58,9 @@ public class LineService {
                 line.getCreatedDate(),
                 line.getModifiedDate()
         );
+    }
+
+    public void deleteLine(Long id) {
+        lineRepository.deleteById(id);
     }
 }

@@ -111,6 +111,44 @@ class LineAcceptanceTest extends AcceptanceTest {
         지하철_노선_수정됨(response, 구분당선, bgBlue600);
     }
 
+    /**
+     * Given 지하철 노선 생성을 요청 하고
+     * When 생성한 지하철 노선 삭제를 요청 하면
+     * Then 생성한 지하철 노선 삭제가 성공한다.
+     */
+    @DisplayName("지하철 노선 삭제")
+    @Test
+    void deleteLine() {
+        // given
+        String 신분당선 = "신분당선";
+        String bgRed600 = "bg-red-600";
+        ExtractableResponse<Response> createResponse = 지하철_노선_등록되어_있음(신분당선, bgRed600);
+        String uri = createResponse.header("Location");
+
+        String 이호선 = "이호선";
+        String bgGreen600 = "bg-green-600";
+        지하철_노선_등록되어_있음(이호선, bgGreen600);
+
+        // when
+        ExtractableResponse<Response> response = 지하철_노선_삭제_요청(uri);
+
+        // then
+        지하철_노선_삭제됨(response);
+    }
+
+    private void 지하철_노선_삭제됨(ExtractableResponse<Response> response) {
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+
+    }
+
+    private ExtractableResponse<Response> 지하철_노선_삭제_요청(String uri) {
+        return RestAssured.given().log().all()
+                .when()
+                .delete(uri)
+                .then().log().all()
+                .extract();
+    }
+
     private void 지하철_노선_수정됨(ExtractableResponse<Response> response, String 구분당선, String bgBlue600) {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.jsonPath().getString("name")).isEqualTo(구분당선);
@@ -180,15 +218,5 @@ class LineAcceptanceTest extends AcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.jsonPath().getList("name")).contains(신분당선, 분당선);
         assertThat(response.jsonPath().getList("color")).contains(red, yellow);
-    }
-
-    /**
-     * Given 지하철 노선 생성을 요청 하고
-     * When 생성한 지하철 노선 삭제를 요청 하면
-     * Then 생성한 지하철 노선 삭제가 성공한다.
-     */
-    @DisplayName("지하철 노선 삭제")
-    @Test
-    void deleteLine() {
     }
 }
