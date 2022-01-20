@@ -21,6 +21,11 @@ public class Line extends BaseEntity {
         this.color = color;
     }
 
+    public void update(Line line) {
+        name = line.name;
+        color = line.color;
+    }
+
     public Long getId() {
         return id;
     }

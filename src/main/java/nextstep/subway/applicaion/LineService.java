@@ -44,6 +44,12 @@ public class LineService {
         return createLineResponse(line);
     }
 
+    public LineResponse updateLine(Long id, LineRequest request) {
+        Line line = lineRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(id + ": Line을 찾지 못했습니다."));
+        line.update(new Line(request.getName(), request.getColor()));
+        return createLineResponse(line);
+    }
+
     private LineResponse createLineResponse(Line line) {
         return new LineResponse(
                 line.getId(),
