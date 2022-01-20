@@ -3,7 +3,6 @@ package nextstep.subway.acceptance;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -25,10 +24,10 @@ class LineAcceptanceTest extends AcceptanceTest {
     void createLine() {
         // given
         String 신분당선 = "신분당선";
-        String red = "red";
+        String bgRed600 = "bg-red-600";
 
         // when
-        ExtractableResponse<Response> response = 지하철_노선_생성_요청(신분당선, red);
+        ExtractableResponse<Response> response = 지하철_노선_생성_요청(신분당선, bgRed600);
 
         // then
         지하철_노선_생성됨(response);
