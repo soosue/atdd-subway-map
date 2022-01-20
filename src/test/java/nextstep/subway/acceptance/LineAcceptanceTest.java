@@ -24,22 +24,14 @@ class LineAcceptanceTest extends AcceptanceTest {
     @Test
     void createLine() {
         // given
-        Map<String, String> params = new HashMap<>();
-        params.put("name", "신분당선");
-        params.put("color", "red");
+        String 신분당선 = "신분당선";
+        String red = "red";
 
         // when
-        ExtractableResponse<Response> response = RestAssured.given().log().all()
-                .body(params)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .post("/lines")
-                .then().log().all()
-                .extract();
+        ExtractableResponse<Response> response = 지하철_노선_생성_요청(신분당선, red);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-        assertThat(response.header("Location")).isNotBlank();
+        지하철_노선_생성됨(response);
     }
 
     /**
@@ -51,6 +43,57 @@ class LineAcceptanceTest extends AcceptanceTest {
     @DisplayName("지하철 노선 목록 조회")
     @Test
     void getLines() {
+        // given
+        String 신분당선 = "신분당선";
+        String red = "red";
+        지하철_노선_등록되어_있음(신분당선, red);
+
+        String 분당선 = "분당선";
+        String yellow = "yellow";
+        지하철_노선_등록되어_있음(분당선, yellow);
+
+        // when
+        ExtractableResponse<Response> response = 지하철_노선_목록_조회_요청();
+
+        // then
+        지하철_노선_목록_조회됨(신분당선, red, 분당선, yellow, response);
+    }
+
+    private ExtractableResponse<Response> 지하철_노선_생성_요청(String name, String color) {
+        Map<String, String> params = new HashMap<>();
+        params.put("name", name);
+        params.put("color", color);
+
+        return RestAssured.given().log().all()
+                .body(params)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .post("/lines")
+                .then().log().all()
+                .extract();
+    }
+
+    private ExtractableResponse<Response> 지하철_노선_목록_조회_요청() {
+        return RestAssured.given().log().all()
+                .when()
+                .get("/lines")
+                .then().log().all()
+                .extract();
+    }
+
+    private void 지하철_노선_등록되어_있음(String name, String color) {
+        ExtractableResponse<Response> createResponse = 지하철_노선_생성_요청(name, color);
+    }
+
+    private void 지하철_노선_생성됨(ExtractableResponse<Response> response) {
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+        assertThat(response.header("Location")).isNotBlank();
+    }
+
+    private void 지하철_노선_목록_조회됨(String 신분당선, String red, String 분당선, String yellow, ExtractableResponse<Response> response) {
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.jsonPath().getList("name")).contains(신분당선, 분당선);
+        assertThat(response.jsonPath().getList("color")).contains(red, yellow);
     }
 
     /**
