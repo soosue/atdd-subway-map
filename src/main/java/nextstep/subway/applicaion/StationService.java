@@ -19,4 +19,29 @@ public class StationService {
         this.stationRepository = stationRepository;
     }
 
+    public StationResponse saveStation(StationRequest stationRequest) {
+        Station station = stationRepository.save(new Station(stationRequest.getName()));
+        return createStationResponse(station);
+    }
+
+    @Transactional(readOnly = true)
+    public List<StationResponse> findAllStations() {
+        List<Station> lines = stationRepository.findAll();
+        return lines.stream()
+                .map(this::createStationResponse)
+                .collect(Collectors.toList());
+    }
+
+    public void deleteStationById(Long id) {
+        stationRepository.deleteById(id);
+    }
+
+    private StationResponse createStationResponse(Station station) {
+        return new StationResponse(
+                station.getId(),
+                station.getName(),
+                station.getCreatedDate(),
+                station.getModifiedDate()
+        );
+    }
 }
