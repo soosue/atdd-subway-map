@@ -44,18 +44,18 @@ class LineAcceptanceTest extends AcceptanceTest {
     void getLines() {
         // given
         String 신분당선 = "신분당선";
-        String red = "red";
-        지하철_노선_등록되어_있음(신분당선, red);
+        String bgRed600 = "bg-red-600";
+        지하철_노선_등록되어_있음(신분당선, bgRed600);
 
-        String 분당선 = "분당선";
-        String yellow = "yellow";
-        지하철_노선_등록되어_있음(분당선, yellow);
+        String 이호선 = "이호선";
+        String bgGreen600 = "bg-green-600";
+        지하철_노선_등록되어_있음(이호선, bgGreen600);
 
         // when
         ExtractableResponse<Response> response = 지하철_노선_목록_조회_요청();
 
         // then
-        지하철_노선_목록_조회됨(신분당선, red, 분당선, yellow, response);
+        지하철_노선_목록_조회됨(신분당선, bgRed600, 이호선, bgGreen600, response);
     }
 
     private ExtractableResponse<Response> 지하철_노선_생성_요청(String name, String color) {
