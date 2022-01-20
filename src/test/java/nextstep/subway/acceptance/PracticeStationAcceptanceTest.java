@@ -3,9 +3,11 @@ package nextstep.subway.acceptance;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import nextstep.subway.utils.PracticeDatabaseCleanup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
@@ -23,9 +25,13 @@ public class PracticeStationAcceptanceTest {
     @LocalServerPort
     int port;
 
+    @Autowired
+    private PracticeDatabaseCleanup databaseCleanup;
+
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
+        databaseCleanup.execute();
     }
 
     @Test
